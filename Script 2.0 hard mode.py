@@ -74,7 +74,7 @@ def remove():
         for pos, value in dicty.items():
             if value == y:
                 tempoarypositions.remove(pos)
-        removey(y, tempoarypositions, numy)
+        removey(y, tempoarypositions, numy, pos)
 
 def removeg(g, pos):
     global possiblewords
@@ -84,20 +84,32 @@ def removex(x, num):
     global possiblewords
     possiblewords = [word for word in possiblewords if word.count(x.lower()) == num]
 
-def removey(y, pos, num):
+def removey(y, positions, num, pos): # NEED REFINING / NOT EFFICIENT
     global possiblewords
+    possiblewords = [word for word in possiblewords if y.lower() != word[pos]]
+    tempwordlist = []
     for word in possiblewords:
         tempoary = []
-        for position in pos:
+        for position in positions:
             tempoary.append(word[position])
-        print(tempoary)
-        possiblewords = [word for word in possiblewords if word.count(y.lower()) == num] # WORK FROM HERE
+        if tempoary.count(y.lower()) >= num:
+            tempwordlist.append(word)
+    possiblewords = tempwordlist
+
+def possibleanswers():
+    global possiblewords
+    print('Possible Answers Include:')
+    print(' '.join(possiblewords).upper())
+
+def guessbot():
+    pass
 
 def normal():
     reset()
     query()
     seperate()
     remove()
+    possibleanswers()
 
 def hard():
     pass
