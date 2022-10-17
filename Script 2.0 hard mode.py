@@ -56,7 +56,9 @@ def remove():
     global resultx
     global resulty
     global resultg
+    positions = [0, 1, 2, 3, 4]
     for pos, g in dictg.items():
+        positions.remove(pos)
         removeg(g, pos)
     for x in resultx:
         if x not in resulty and x not in resultg:
@@ -64,8 +66,10 @@ def remove():
         else:
             num = resulty.count(x) + resultg.count(x)
             removex(x, True, num)
+    for pos in dicty.keys():
+        positions.remove(pos)
     for pos, y in dicty.items():
-        removey(y, pos)
+        removey(y, pos, positions)
 
 def removeg(g, pos):
     global possiblewords
@@ -73,14 +77,10 @@ def removeg(g, pos):
 
 def removex(x, special=None, num=None):
     global possiblewords
-    print(special, num)
     if special == True:
-        for word in possiblewords:
-            print(word)
         possiblewords = [word for word in possiblewords if word.count(x.lower()) == num]
     else:
         possiblewords = [word for word in possiblewords if x.lower() not in word]
-
 def removey(y, pos):
     global possiblewords
     possiblewords = [word for word in possiblewords if y.lower() != word[pos] and y.lower() in word]
