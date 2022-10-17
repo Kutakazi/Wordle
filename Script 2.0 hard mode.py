@@ -24,6 +24,7 @@ def reset():
     global resultx
     global resulty
     global resultg
+    global sety
     guess = []
     results = []
     dictg = defaultdict()
@@ -31,6 +32,7 @@ def reset():
     resultg = []
     resulty = []
     resultx = set({})
+    sety = set({})
 
 def seperate():
     global guess
@@ -40,6 +42,7 @@ def seperate():
     global resultx
     global resulty
     global resultg
+    global sety
     for num, result in enumerate(results):
         if result == 'g':
             dictg[num] = guess[num]
@@ -47,6 +50,7 @@ def seperate():
         if result == 'y':
             dicty[num] = guess[num]
             resulty.append(guess[num])
+            sety.add(guess[num])
         if result == 'x':
             resultx.add(guess[num])
 
@@ -56,34 +60,38 @@ def remove():
     global resultx
     global resulty
     global resultg
+    global sety
     positions = [0, 1, 2, 3, 4]
     for pos, g in dictg.items():
         positions.remove(pos)
         removeg(g, pos)
     for x in resultx:
-        if x not in resulty and x not in resultg:
-            removex(x)
-        else:
-            num = resulty.count(x) + resultg.count(x)
-            removex(x, True, num)
-    for pos in dicty.keys():
-        positions.remove(pos)
-    for pos, y in dicty.items():
-        removey(y, pos, positions)
+        numx = resulty.count(x) + resultg.count(x)
+        removex(x, numx)
+    for y in sety:
+        numy = resulty.count(y)
+        tempoarypositions = positions
+        for pos, value in dicty.items():
+            if value == y:
+                tempoarypositions.remove(pos)
+        removey(y, tempoarypositions, numy)
 
 def removeg(g, pos):
     global possiblewords
     possiblewords = [word for word in possiblewords if g.lower() == word[pos]]
 
-def removex(x, special=None, num=None):
+def removex(x, num):
     global possiblewords
-    if special == True:
-        possiblewords = [word for word in possiblewords if word.count(x.lower()) == num]
-    else:
-        possiblewords = [word for word in possiblewords if x.lower() not in word]
-def removey(y, pos):
+    possiblewords = [word for word in possiblewords if word.count(x.lower()) == num]
+
+def removey(y, pos, num):
     global possiblewords
-    possiblewords = [word for word in possiblewords if y.lower() != word[pos] and y.lower() in word]
+    for word in possiblewords:
+        tempoary = []
+        for position in pos:
+            tempoary.append(word[position])
+        print(tempoary)
+        possiblewords = [word for word in possiblewords if word.count(y.lower()) == num] # WORK FROM HERE
 
 def normal():
     reset()
@@ -112,6 +120,7 @@ dicty = defaultdict()
 resultg = []
 resulty = []
 resultx = set({})
+sety = set({})
 main()
 
 # sortedy = sorted(resulty.keys())
