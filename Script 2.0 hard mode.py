@@ -1,5 +1,5 @@
-from collections import defaultdict
 import guess_bot
+import removal
 
 def prelaunch():
     global allowedwords
@@ -16,129 +16,66 @@ def query():
     guess = list(input().upper())
     print(f'Results For {"".join(guess)}')
     results = list(input().lower())
-
-def reset():
-    global guess
-    global results
-    global dictg
-    global dicty
-    global resultx
-    global resulty
-    global resultg
-    global sety
-    guess = []
-    results = []
-    dictg = defaultdict()
-    dicty = defaultdict()
-    resultg = []
-    resulty = []
-    resultx = set({})
-    sety = set({})
-
-def seperate():
-    global guess
-    global results
-    global dictg
-    global dicty
-    global resultx
-    global resulty
-    global resultg
-    global sety
-    for num, result in enumerate(results):
-        if result == 'g':
-            dictg[num] = guess[num]
-            resultg.append(guess[num])
-        if result == 'y':
-            dicty[num] = guess[num]
-            resulty.append(guess[num])
-            sety.add(guess[num])
-        if result == 'x':
-            resultx.add(guess[num])
-
-def remove(hard=False):
-    global dictg
-    global dicty
-    global resultx
-    global resulty
-    global resultg
-    global sety
-    positions = [0, 1, 2, 3, 4]
-    for pos, g in dictg.items():
-        positions.remove(pos)
-        removeg(g, pos, hard)
-    for x in resultx:
-        numx = resulty.count(x) + resultg.count(x)
-        removex(x, numx, hard)
-    for y in sety:
-        numy = resulty.count(y)
-        tempoarypositions = positions
-        for pos, value in dicty.items():
-            if value == y:
-                tempoarypositions.remove(pos)
-        removey(y, tempoarypositions, numy, pos, hard)
-
-def removeg(g, pos, hard):
-    global possiblewords
-    possiblewords = [word for word in possiblewords if g.lower() == word[pos]]
-    if hard == True:
-        global allowedwords
-        allowedwords = [word for word in allowedwords if g.lower() == word[pos]]
-
-def removex(x, num, hard):
-    global possiblewords
-    possiblewords = [word for word in possiblewords if word.count(x.lower()) == num]
-    if hard == True:
-        global allowedwords
-        allowedwords = [word for word in allowedwords if word.count(x.lower()) == num]
-
-def removey(y, positions, num, pos, hard): # NEED REFINING / NOT EFFICIENT
-    global possiblewords
-    possiblewords = [word for word in possiblewords if y.lower() != word[pos]]
-    tempwordlist = []
-    for word in possiblewords:
-        tempoary = []
-        for position in positions:
-            tempoary.append(word[position])
-        if tempoary.count(y.lower()) >= num:
-            tempwordlist.append(word)
-    possiblewords = tempwordlist
-    if hard == True:
-        global allowedwords
-        allowedwords = [word for word in allowedwords if y.lower() != word[pos]]
-        tempwordlist = []
-        for word in allowedwords:
-            tempoary = []
-            for position in positions:
-                tempoary.append(word[position])
-            if tempoary.count(y.lower()) >= num:
-                tempwordlist.append(word)
-        allowedwords = tempwordlist
+    if results == ['G','G','G','G','G']:
+        print('You Have Found The Answer!')
+        turn = 100
 
 def possibleanswers():
     global possiblewords
     global allowedwords
-    print('Possible Answers Include:')
-    print(' '.join(possiblewords).upper())
+    global turn
+    if len(possiblewords) <= 0:
+        print('Answer Either Not In Word List Or Entered Options Are Wrong.')
+        turn = 100
+    elif len(possiblewords) == 1:
+        print(f'The Answer Is {"".join(possiblewords).upper()}')
+        turn = 100
+    else:
+        print('Possible Answers Include:')
+        print(' '.join(possiblewords).upper())
+    return turn
 
 def hard():
     global possiblewords
     global allowedwords
-    reset()
+    global turn
     query()
-    seperate()
-    remove(True)
-    possibleanswers()
-    guess_bot.main(possiblewords, allowedwords)
+    allowedwords, possiblewords = removal.main(guess, results, allowedwords, possiblewords, True)
+    if turn != 100:
+        turn = possibleanswers()
+    if turn != 100:
+        turn = guess_bot.main(possiblewords, allowedwords, turn)
 
 def normal():
-    pass
+    global possiblewords
+    global allowedwords
+    global turn
+    query()
+    allowedwords, possiblewords = removal.main(guess, results, allowedwords, possiblewords)
+    if turn != 100:
+        turn = possibleanswers()
+    if turn != 100:
+        turn = guess_bot.main(possiblewords, allowedwords, turn)
 
 def main():
     global turn
     prelaunch()
-    while turn < 6:
-        reset()
-        hard()
+    print('What Difficulty? (N, H)')
+    diff = input().lower()
+    while turn != 100:
+        if diff == 'h':
+            hard()
+        else:
+            normal()
+    reset()
+
+def reset():
+    global turn
+    print('Would You Like To Play Again? (Y/N)')
+    ans = input().lower()
+    if ans == 'y':
+        turn = 0
+        main()
 
 
 allowedwords = []
@@ -146,12 +83,6 @@ possiblewords = []
 turn = 0
 guess = []
 results = []
-dictg = defaultdict()
-dicty = defaultdict()
-resultg = []
-resulty = []
-resultx = set({})
-sety = set({})
 main()
 
 # sortedy = sorted(resulty.keys())
