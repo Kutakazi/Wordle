@@ -1,47 +1,42 @@
-from collections import defaultdict
-dict = defaultdict(list)
-tempdict = dict
-totalaverage = defaultdict(float)
-guesses = {}
-possible = []
-allowed = []
-temppossible = []
-tempallowed = []
+possiblewords = []
+allowedwords = []
+dict = {}
+# def main(possible, allowed):
+#     global possiblewords
+#     global allowedwords
+#     possiblewords = possible
+#     allowedwords = allowed
+#     guess()
 
-def main(possiblewords, allowedwords):
-    global possible
-    global allowed
-    global dict
-    global totalaverage
-    possible = possiblewords
-    allowed = allowedwords
-    for allowedword in allowed:
-        dict[allowedword] = dict.get(allowedword)
-        totalaverage[allowedword] = totalaverage.get(allowedword)
-    guessmain()
+# def guess():
+    # global possiblewords
+    # global allowedwords
+    # global dict
+    # dict = {}
+    # for possible in possiblewords:
+    #     tempdict = {}
+    #     for allowed in allowedwords:
+    #         results = identify(possible,allowed,possiblewords)
 
-def guessmain():
-    global possible
-    for possibleword in possible:
-        
+def identify(possible, allowed, possiblewords):
+    result = ['.','.','.','.','.']
+    possible = [letter for letter in possible]
+    allowed = [letter for letter in allowed]
+    possible, allowed, result = identifyg(possible, allowed, result)
+    possible, allowed, result = identifyx(possible, allowed, result)
+    possible, allowed, result = identifyy(possible, allowed, result)
 
-def guess1(allowedword, possibleword):
+def identifyg(possible, allowed, result):
+    for pos, letter in enumerate(possible):
+        if letter == allowed[pos]:
+            result[pos] = 'g'
+            possible[pos] = '.'
+            allowed[pos] = '.'
+    return possible, allowed, result
 
-def guess2():
-    pass
-def guess3():
-    pass
-def guess4():
-    pass
-
-
-def reset():
-    global possible
-    global allowed
-    global dict
-    global temppossible
-    global tempallowed
-    global tempdict
-    temppossible = possible
-    tempallowed = allowed
-    tempdict = dict
+def identifyx(possible, allowed, result):
+    for letter in possible:
+        if letter in allowed and letter != '.':
+            print(letter)
+x
+identify('salet', 'treat', 'aaaaa')
