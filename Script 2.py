@@ -35,27 +35,16 @@ def possibleanswers():
         print(' '.join(possiblewords).upper())
     return turn
 
-def hard():
+def game(hard=False):
     global possiblewords
     global allowedwords
     global turn
     query()
-    allowedwords, possiblewords = removal.main(guess, results, allowedwords, possiblewords, True)
+    allowedwords, possiblewords = removal.main(guess, results, allowedwords, possiblewords, hard)
+    # if turn != 100:
+    turn = possibleanswers()
     if turn != 100:
-        turn = possibleanswers()
-    if turn != 100:
-        turn = guess_bot.main(possiblewords, allowedwords, turn)
-
-def normal():
-    global possiblewords
-    global allowedwords
-    global turn
-    query()
-    allowedwords, possiblewords = removal.main(guess, results, allowedwords, possiblewords)
-    if turn != 100:
-        turn = possibleanswers()
-    if turn != 100:
-        turn = guess_bot.main(possiblewords, allowedwords, turn)
+        guess_bot.main(possiblewords, allowedwords)
 
 def main():
     global turn
@@ -64,9 +53,9 @@ def main():
     diff = input().lower()
     while turn != 100:
         if diff == 'h':
-            hard()
+            game(True)
         else:
-            normal()
+            game()
     reset()
 
 def reset():
@@ -77,14 +66,9 @@ def reset():
         turn = 0
         main()
 
-
 allowedwords = []
 possiblewords = []
 turn = 0
 guess = []
 results = []
 main()
-
-# sortedy = sorted(resulty.keys())
-#     for i in sortedy:
-#         print(resulty[i])
